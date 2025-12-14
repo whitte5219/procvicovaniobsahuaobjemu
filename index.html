@@ -13,19 +13,20 @@
 <div class="tabs">
   <button id="tabCalc" class="active">Kalkulačka</button>
   <button id="tabHelp">Pomůcky</button>
-  <button id="tabAI">AI asistent</button>
 </div>
 
-<!-- KALKULAČKA -->
+<!-- ================= KALKULAČKA ================= -->
 <div id="calc" class="page">
   <h2>Kalkulačka</h2>
 
   <div class="row">
-    <label>Pojem:
+    <label>
+      Pojem:
       <select id="calcConcept"></select>
     </label>
 
-    <label>Tvar:
+    <label>
+      Tvar:
       <select id="calcShape"></select>
     </label>
   </div>
@@ -38,88 +39,48 @@
   <canvas id="calcCanvas" width="650" height="360"></canvas>
 </div>
 
-<!-- POMŮCKY -->
+<!-- ================= POMŮCKY ================= -->
 <div id="help" class="page hidden">
   <h2>Pomůcky</h2>
 
   <p>
-    Tato část slouží k pochopení rozdílu mezi pojmy <b>obvod</b>, <b>obsah</b>, <b>povrch</b> a <b>objem</b>.
-    Dole jsou vysvětlení + vzorce pro základní tvary.
+    Tato část slouží k pochopení rozdílu mezi pojmy
+    <b>obvod</b>, <b>obsah</b>, <b>povrch</b> a <b>objem</b>.
+    Nejde o počítání, ale o význam pojmů.
   </p>
 
   <h3>Význam pojmů</h3>
 
   <div class="helpCard">
     <div class="helpTitle">Obvod (2D)</div>
-    <div class="helpGrid">
-      <div class="helpText">
-        <ul>
-          <li><b>Obvod</b> je délka čáry kolem útvaru.</li>
-          <li>Jednotky: cm, m, km (jednotky délky).</li>
-        </ul>
-      </div>
-      <div class="helpImg">
-        <svg width="160" height="110" viewBox="0 0 160 110">
-          <rect x="35" y="15" width="90" height="90" fill="none" stroke="black" stroke-width="4"/>
-        </svg>
-      </div>
-    </div>
+    <ul>
+      <li>Obvod je délka čáry kolem rovinného útvaru.</li>
+      <li>Jednotky: cm, m, km (jednotky délky).</li>
+    </ul>
   </div>
 
   <div class="helpCard">
     <div class="helpTitle">Obsah (2D)</div>
-    <div class="helpGrid">
-      <div class="helpText">
-        <ul>
-          <li><b>Obsah</b> je plocha uvnitř útvaru.</li>
-          <li>Jednotky: cm², m² (jednotky plochy).</li>
-        </ul>
-      </div>
-      <div class="helpImg">
-        <svg width="160" height="110" viewBox="0 0 160 110">
-          <rect x="35" y="15" width="90" height="90" fill="#d9ecff" stroke="black" stroke-width="3"/>
-        </svg>
-      </div>
-    </div>
+    <ul>
+      <li>Obsah je plocha uvnitř rovinného útvaru.</li>
+      <li>Jednotky: cm², m² (jednotky plochy).</li>
+    </ul>
   </div>
 
   <div class="helpCard">
     <div class="helpTitle">Povrch (3D)</div>
-    <div class="helpGrid">
-      <div class="helpText">
-        <ul>
-          <li><b>Povrch</b> je součet ploch všech stěn tělesa (jako “obal”).</li>
-          <li>Jednotky: cm², m² (jednotky plochy).</li>
-        </ul>
-      </div>
-      <div class="helpImg">
-        <!-- cube wireframe -->
-        <svg width="160" height="130" viewBox="0 0 160 130">
-          <rect x="40" y="45" width="70" height="70" fill="none" stroke="black" stroke-width="3"/>
-          <path d="M40 45 L65 25 L135 25 L110 45 Z" fill="none" stroke="black" stroke-width="3"/>
-          <path d="M110 45 L135 25 L135 95 L110 115 Z" fill="none" stroke="black" stroke-width="3"/>
-        </svg>
-      </div>
-    </div>
+    <ul>
+      <li>Povrch je součet ploch všech stěn tělesa.</li>
+      <li>Jednotky: cm², m² (jednotky plochy).</li>
+    </ul>
   </div>
 
   <div class="helpCard">
     <div class="helpTitle">Objem (3D)</div>
-    <div class="helpGrid">
-      <div class="helpText">
-        <ul>
-          <li><b>Objem</b> je prostor uvnitř tělesa.</li>
-          <li>Jednotky: cm³, m³ (jednotky objemu).</li>
-        </ul>
-      </div>
-      <div class="helpImg">
-        <svg width="160" height="130" viewBox="0 0 160 130">
-          <rect x="40" y="45" width="70" height="70" fill="#d9ecff" stroke="black" stroke-width="3"/>
-          <path d="M40 45 L65 25 L135 25 L110 45 Z" fill="#d9ecff" stroke="black" stroke-width="3" opacity="0.6"/>
-          <path d="M110 45 L135 25 L135 95 L110 115 Z" fill="#d9ecff" stroke="black" stroke-width="3" opacity="0.6"/>
-        </svg>
-      </div>
-    </div>
+    <ul>
+      <li>Objem je prostor uvnitř tělesa.</li>
+      <li>Jednotky: cm³, m³ (jednotky objemu).</li>
+    </ul>
   </div>
 
   <h3>Vzorce pro jednotlivé tvary</h3>
@@ -145,14 +106,14 @@
     <ul>
       <li><b>Obvod:</b> obvod = 2 · π · r</li>
       <li><b>Obsah:</b> obsah = π · r²</li>
-      <li>Pozn.: π ≈ 3,14</li>
+      <li>Poznámka: π ≈ 3,14</li>
     </ul>
   </div>
 
   <div class="helpCard">
     <div class="helpTitle">Trojúhelník (pravouhlý)</div>
     <ul>
-      <li><b>Obsah:</b> obsah = (a · b) / 2 (a, b jsou odvěsny)</li>
+      <li><b>Obsah:</b> obsah = (a · b) / 2</li>
       <li><b>Obvod:</b> obvod = a + b + c, kde c = √(a² + b²)</li>
     </ul>
   </div>
@@ -160,7 +121,7 @@
   <div class="helpCard">
     <div class="helpTitle">Trojúhelník (nepravouhlý)</div>
     <ul>
-      <li><b>Obsah:</b> obsah = (a · vₐ) / 2 (vₐ je výška na stranu a)</li>
+      <li><b>Obsah:</b> obsah = (a · vₐ) / 2</li>
       <li><b>Obvod:</b> obvod = a + b + c</li>
     </ul>
   </div>
@@ -180,22 +141,9 @@
       <li><b>Objem:</b> objem = a · b · c</li>
     </ul>
   </div>
-</div>
 
-<!-- AI ASISTENT -->
-<div id="ai" class="page hidden">
-  <h2>AI asistent</h2>
-  <p>Pokud něčemu nerozumíš, zeptej se. AI vysvětlí matematiku jednoduše a krok za krokem.</p>
-
-  <div id="chatBox"></div>
-
-  <div class="row">
-    <input id="aiInput" type="text" placeholder="Napiš otázku…">
-    <button id="aiSend" type="button">Odeslat</button>
-  </div>
 </div>
 
 <script src="main.js"></script>
-<script src="ai.js"></script>
 </body>
 </html>
