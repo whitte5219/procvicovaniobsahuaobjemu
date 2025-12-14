@@ -15,16 +15,18 @@
   <button id="tabHelp">Pomůcky</button>
 </div>
 
-<!-- KALKULAČKA -->
+<!-- ================= KALKULAČKA ================= -->
 <div id="calc" class="page">
   <h2>Kalkulačka</h2>
 
   <div class="row">
-    <label>Pojem:
+    <label>
+      Pojem:
       <select id="calcConcept"></select>
     </label>
 
-    <label>Tvar:
+    <label>
+      Tvar:
       <select id="calcShape"></select>
     </label>
   </div>
@@ -37,156 +39,106 @@
   <canvas id="calcCanvas" width="650" height="360"></canvas>
 </div>
 
-<!-- POMŮCKY (info only) -->
+<!-- ================= POMŮCKY ================= -->
 <div id="help" class="page hidden">
   <h2>Pomůcky</h2>
 
   <p>
-    Cíl: pochopit rozdíl mezi <b>obvod</b>, <b>obsah</b>, <b>povrch</b>, <b>objem</b>.
-    Dole jsou vysvětlení + vzorce pro základní tvary.
+    Tato část slouží k pochopení rozdílu mezi pojmy
+    <b>obvod</b>, <b>obsah</b>, <b>povrch</b> a <b>objem</b>.
+    Nejde o počítání, ale o význam pojmů.
   </p>
 
   <h3>Význam pojmů</h3>
 
   <div class="helpCard">
     <div class="helpTitle">Obvod (2D)</div>
-    <div class="helpGrid">
-      <div class="helpText">
-        <ul>
-          <li><b>Obvod</b> je délka čáry kolem útvaru.</li>
-          <li>Jednotky: cm, m, … (délka)</li>
-          <li>Typicky se zapisuje <b>o</b> nebo <b>O</b>.</li>
-        </ul>
-      </div>
-      <div class="helpImg">
-        <!-- Square outline -->
-        <svg width="160" height="110" viewBox="0 0 160 110">
-          <rect x="35" y="15" width="90" height="90" fill="none" stroke="black" stroke-width="4"/>
-        </svg>
-      </div>
-    </div>
+    <ul>
+      <li>Obvod je délka čáry kolem rovinného útvaru.</li>
+      <li>Jednotky: cm, m, km (jednotky délky).</li>
+    </ul>
   </div>
 
   <div class="helpCard">
     <div class="helpTitle">Obsah (2D)</div>
-    <div class="helpGrid">
-      <div class="helpText">
-        <ul>
-          <li><b>Obsah</b> je plocha uvnitř útvaru.</li>
-          <li>Jednotky: cm², m², … (plocha)</li>
-          <li>Typicky se zapisuje <b>S</b>.</li>
-        </ul>
-      </div>
-      <div class="helpImg">
-        <!-- Filled square -->
-        <svg width="160" height="110" viewBox="0 0 160 110">
-          <rect x="35" y="15" width="90" height="90" fill="#d9ecff" stroke="black" stroke-width="3"/>
-        </svg>
-      </div>
-    </div>
+    <ul>
+      <li>Obsah je plocha uvnitř rovinného útvaru.</li>
+      <li>Jednotky: cm², m² (jednotky plochy).</li>
+    </ul>
   </div>
 
   <div class="helpCard">
     <div class="helpTitle">Povrch (3D)</div>
-    <div class="helpGrid">
-      <div class="helpText">
-        <ul>
-          <li><b>Povrch</b> je součet ploch všech stěn tělesa (jako “obal”).</li>
-          <li>Jednotky: cm², m², … (plocha)</li>
-          <li>Typicky se zapisuje <b>S</b>.</li>
-        </ul>
-      </div>
-      <div class="helpImg">
-        <!-- Cube wireframe like your example -->
-        <svg width="160" height="130" viewBox="0 0 160 130">
-          <!-- front square -->
-          <rect x="40" y="45" width="70" height="70" fill="none" stroke="black" stroke-width="3"/>
-          <!-- top face -->
-          <path d="M40 45 L65 25 L135 25 L110 45 Z" fill="none" stroke="black" stroke-width="3"/>
-          <!-- right face -->
-          <path d="M110 45 L135 25 L135 95 L110 115 Z" fill="none" stroke="black" stroke-width="3"/>
-        </svg>
-      </div>
-    </div>
+    <ul>
+      <li>Povrch je součet ploch všech stěn tělesa.</li>
+      <li>Jednotky: cm², m² (jednotky plochy).</li>
+    </ul>
   </div>
 
   <div class="helpCard">
     <div class="helpTitle">Objem (3D)</div>
-    <div class="helpGrid">
-      <div class="helpText">
-        <ul>
-          <li><b>Objem</b> je prostor uvnitř tělesa (kolik se dovnitř vejde).</li>
-          <li>Jednotky: cm³, m³, … (objem)</li>
-          <li>Typicky se zapisuje <b>V</b>.</li>
-        </ul>
-      </div>
-      <div class="helpImg">
-        <!-- Cube wireframe -->
-        <svg width="160" height="130" viewBox="0 0 160 130">
-          <rect x="40" y="45" width="70" height="70" fill="#d9ecff" stroke="black" stroke-width="3"/>
-          <path d="M40 45 L65 25 L135 25 L110 45 Z" fill="#d9ecff" stroke="black" stroke-width="3" opacity="0.6"/>
-          <path d="M110 45 L135 25 L135 95 L110 115 Z" fill="#d9ecff" stroke="black" stroke-width="3" opacity="0.6"/>
-        </svg>
-      </div>
-    </div>
+    <ul>
+      <li>Objem je prostor uvnitř tělesa.</li>
+      <li>Jednotky: cm³, m³ (jednotky objemu).</li>
+    </ul>
   </div>
 
-  <h3>Vzorce pro tvary</h3>
+  <h3>Vzorce pro jednotlivé tvary</h3>
 
   <div class="helpCard">
     <div class="helpTitle">Čtverec</div>
     <ul>
-      <li><b>Obvod:</b> o = 4a</li>
-      <li><b>Obsah:</b> S = a²</li>
+      <li><b>Obvod:</b> obvod = 4 · a</li>
+      <li><b>Obsah:</b> obsah = a²</li>
     </ul>
   </div>
 
   <div class="helpCard">
     <div class="helpTitle">Obdélník</div>
     <ul>
-      <li><b>Obvod:</b> o = 2(a + b)</li>
-      <li><b>Obsah:</b> S = a · b</li>
+      <li><b>Obvod:</b> obvod = 2 · (a + b)</li>
+      <li><b>Obsah:</b> obsah = a · b</li>
     </ul>
   </div>
 
   <div class="helpCard">
     <div class="helpTitle">Kruh</div>
     <ul>
-      <li><b>Obvod:</b> o = 2πr</li>
-      <li><b>Obsah:</b> S = πr²</li>
-      <li>Pozn.: π ≈ 3,14</li>
+      <li><b>Obvod:</b> obvod = 2 · π · r</li>
+      <li><b>Obsah:</b> obsah = π · r²</li>
+      <li>Poznámka: π ≈ 3,14</li>
     </ul>
   </div>
 
   <div class="helpCard">
     <div class="helpTitle">Trojúhelník (pravouhlý)</div>
     <ul>
-      <li><b>Obsah:</b> S = (a · b) / 2 (a, b jsou odvěsny)</li>
-      <li><b>Obvod:</b> o = a + b + c, kde c = √(a² + b²)</li>
+      <li><b>Obsah:</b> obsah = (a · b) / 2</li>
+      <li><b>Obvod:</b> obvod = a + b + c, kde c = √(a² + b²)</li>
     </ul>
   </div>
 
   <div class="helpCard">
     <div class="helpTitle">Trojúhelník (nepravouhlý)</div>
     <ul>
-      <li><b>Obsah:</b> S = (a · vₐ) / 2 (vₐ je výška na stranu a)</li>
-      <li><b>Obvod:</b> o = a + b + c</li>
+      <li><b>Obsah:</b> obsah = (a · vₐ) / 2</li>
+      <li><b>Obvod:</b> obvod = a + b + c</li>
     </ul>
   </div>
 
   <div class="helpCard">
     <div class="helpTitle">Krychle</div>
     <ul>
-      <li><b>Povrch:</b> S = 6a²</li>
-      <li><b>Objem:</b> V = a³</li>
+      <li><b>Povrch:</b> povrch = 6 · a²</li>
+      <li><b>Objem:</b> objem = a³</li>
     </ul>
   </div>
 
   <div class="helpCard">
-    <div class="helpTitle">Kvádr (navíc)</div>
+    <div class="helpTitle">Kvádr</div>
     <ul>
-      <li><b>Povrch:</b> S = 2(ab + ac + bc)</li>
-      <li><b>Objem:</b> V = a · b · c</li>
+      <li><b>Povrch:</b> povrch = 2 · (a · b + a · c + b · c)</li>
+      <li><b>Objem:</b> objem = a · b · c</li>
     </ul>
   </div>
 
