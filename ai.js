@@ -1,5 +1,5 @@
 // ================= CONFIG =================
-const COHERE_API_KEY = ""; // <-- PUT YOUR KEY HERE
+const COHERE_API_KEY = "PK6ZC8iaxpBoEYu2FMXoymt9LmgQuNPcyZt7pZ6U"; // <-- PUT YOUR KEY HERE
 const COHERE_MODEL = "command-a-reasoning-08-2025";
 
 // ================= INIT =================
