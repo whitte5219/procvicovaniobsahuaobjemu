@@ -32,7 +32,7 @@ const CONCEPTS = [
   { key:"objem",  label:"objem"  }
 ];
 
-// NOTE: formula text is now NOT shortened (uses words + "·")
+// FULL text formulas (no o/S/V shortcuts in calculator)
 const SHAPES = {
   square: {
     name: "Čtverec",
@@ -118,12 +118,8 @@ const SHAPES = {
 let values = {};
 
 // ---------------- init selects ----------------
-for (const c of CONCEPTS){
-  conceptSelect.add(new Option(c.label, c.key));
-}
-for (const key in SHAPES){
-  shapeSelect.add(new Option(SHAPES[key].name, key));
-}
+for (const c of CONCEPTS) conceptSelect.add(new Option(c.label, c.key));
+for (const key in SHAPES) shapeSelect.add(new Option(SHAPES[key].name, key));
 
 // defaults
 shapeSelect.value = "square";
@@ -140,13 +136,10 @@ function syncConceptOptions(){
   conceptSelect.innerHTML = "";
 
   for (const c of CONCEPTS){
-    if (allowed.includes(c.key)){
-      conceptSelect.add(new Option(c.label, c.key));
-    }
+    if (allowed.includes(c.key)) conceptSelect.add(new Option(c.label, c.key));
   }
 
-  if (allowed.includes(current)) conceptSelect.value = current;
-  else conceptSelect.value = allowed[0];
+  conceptSelect.value = allowed.includes(current) ? current : allowed[0];
 }
 
 function buildInputs(){
@@ -183,11 +176,7 @@ function defaultValue(dim){
 }
 
 // ---------------- Events ----------------
-shapeSelect.onchange = () => {
-  syncConceptOptions();
-  buildInputs();
-  render();
-};
+shapeSelect.onchange = () => { syncConceptOptions(); buildInputs(); render(); };
 conceptSelect.onchange = render;
 
 // ---------------- Render ----------------
@@ -206,87 +195,83 @@ function render(){
   }
 
   ctx.clearRect(0,0,canvas.width,canvas.height);
-
-  // border
   ctx.strokeStyle = "black";
   ctx.lineWidth = 2;
   ctx.strokeRect(1,1,canvas.width-2,canvas.height-2);
 
-  // draw shape
   shape.draw(values);
 }
 
 // ---------------- Drawing helpers ----------------
-function center(){
-  return { cx: canvas.width/2, cy: canvas.height/2 };
-}
+function center(){ return { cx: canvas.width/2, cy: canvas.height/2 }; }
 function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
 
 function labelText(text, x, y){
   ctx.save();
   ctx.fillStyle = "black";
-  ctx.font = "16px Arial";
+  ctx.font = "18px Arial";
   ctx.fillText(text, x, y);
   ctx.restore();
 }
 
-// draw a small dimension line with arrows-ish and text
-function dimLine(x1,y1,x2,y2,text){
+function dimLine(x1,y1,x2,y2,text, vertical=false){
   ctx.save();
   ctx.strokeStyle = "black";
   ctx.lineWidth = 1;
+
   ctx.beginPath();
   ctx.moveTo(x1,y1);
   ctx.lineTo(x2,y2);
   ctx.stroke();
 
-  // small ticks on ends
+  // ticks
   const tick = 6;
   ctx.beginPath();
-  ctx.moveTo(x1, y1 - tick);
-  ctx.lineTo(x1, y1 + tick);
-  ctx.moveTo(x2, y2 - tick);
-  ctx.lineTo(x2, y2 + tick);
+  if (vertical){
+    ctx.moveTo(x1 - tick, y1); ctx.lineTo(x1 + tick, y1);
+    ctx.moveTo(x2 - tick, y2); ctx.lineTo(x2 + tick, y2);
+  } else {
+    ctx.moveTo(x1, y1 - tick); ctx.lineTo(x1, y1 + tick);
+    ctx.moveTo(x2, y2 - tick); ctx.lineTo(x2, y2 + tick);
+  }
   ctx.stroke();
 
   labelText(text, (x1+x2)/2 + 8, (y1+y2)/2 - 8);
   ctx.restore();
 }
 
-// ---------------- 2D ----------------
+// ---------------- 2D drawings + labels ----------------
 function drawSquare(a){
   const {cx, cy} = center();
-  const s = clamp(20 + a*18, 60, 260);
-
+  const s = clamp(20 + a*6, 60, 260); // gentler scaling for big numbers
   const x = cx - s/2;
   const y = cy - s/2;
 
   ctx.lineWidth = 3;
   ctx.strokeRect(x, y, s, s);
 
-  // label side length a on the left side (as you wanted)
-  dimLine(x - 30, y, x - 30, y + s, `a = ${a}`);
+  // LEFT label: a
+  dimLine(x - 40, y, x - 40, y + s, `a = ${a}`, true);
 }
 
 function drawRectangle(a,b){
   const {cx, cy} = center();
-  const w = clamp(30 + a*18, 80, 380);
-  const h = clamp(30 + b*18, 70, 260);
-
+  const w = clamp(30 + a*6, 80, 420);
+  const h = clamp(30 + b*6, 70, 300);
   const x = cx - w/2;
   const y = cy - h/2;
 
   ctx.lineWidth = 3;
   ctx.strokeRect(x, y, w, h);
 
-  // show a on bottom, b on left
-  dimLine(x, y + h + 25, x + w, y + h + 25, `a = ${a}`);
-  dimLine(x - 30, y, x - 30, y + h, `b = ${b}`);
+  // bottom a, left b
+  dimLine(x, y + h + 35, x + w, y + h + 35, `a = ${a}`, false);
+  dimLine(x - 40, y, x - 40, y + h, `b = ${b}`, true);
 }
 
 function drawCircle(r){
   const {cx, cy} = center();
-  const rad = clamp(20 + r*18, 40, 180);
+  const rad = clamp(20 + r*6, 40, 190);
 
   ctx.lineWidth = 3;
   ctx.beginPath();
@@ -299,13 +284,13 @@ function drawCircle(r){
   ctx.lineTo(cx + rad, cy);
   ctx.stroke();
 
-  labelText(`r = ${r}`, cx + rad + 10, cy + 5);
+  labelText(`r = ${r}`, cx + rad + 15, cy + 6);
 }
 
 function drawRightTriangle(a,b){
   const {cx, cy} = center();
-  const w = clamp(30 + a*18, 90, 380);
-  const h = clamp(30 + b*18, 90, 260);
+  const w = clamp(30 + a*6, 90, 420);
+  const h = clamp(30 + b*6, 90, 300);
 
   const x0 = cx - w/2;
   const y0 = cy + h/2;
@@ -318,15 +303,14 @@ function drawRightTriangle(a,b){
   ctx.closePath();
   ctx.stroke();
 
-  // labels on legs
-  dimLine(x0, y0 + 25, x0 + w, y0 + 25, `a = ${a}`);
-  dimLine(x0 - 30, y0 - h, x0 - 30, y0, `b = ${b}`);
+  dimLine(x0, y0 + 35, x0 + w, y0 + 35, `a = ${a}`, false);
+  dimLine(x0 - 40, y0 - h, x0 - 40, y0, `b = ${b}`, true);
 }
 
 function drawNonRightTriangle(a, va){
   const {cx, cy} = center();
-  const base = clamp(30 + a*18, 100, 420);
-  const h = clamp(30 + va*18, 90, 280);
+  const base = clamp(30 + a*6, 110, 460);
+  const h = clamp(30 + va*6, 90, 320);
 
   const x1 = cx - base/2, y1 = cy + h/2;
   const x2 = cx + base/2, y2 = cy + h/2;
@@ -340,33 +324,29 @@ function drawNonRightTriangle(a, va){
   ctx.closePath();
   ctx.stroke();
 
-  // base a label
-  dimLine(x1, y1 + 25, x2, y2 + 25, `a = ${a}`);
-  // height va label (simple vertical line down from top point)
+  dimLine(x1, y1 + 35, x2, y2 + 35, `a = ${a}`, false);
+
   ctx.beginPath();
   ctx.moveTo(x3, y3);
   ctx.lineTo(x3, y1);
   ctx.stroke();
-  labelText(`vₐ = ${va}`, x3 + 10, (y3 + y1)/2);
+  labelText(`vₐ = ${va}`, x3 + 12, (y3 + y1)/2);
 }
 
-// ---------------- 3D wireframe ----------------
+// ---------------- 3D wireframe + labels ----------------
 function drawCubeWireframe(a){
   const {cx, cy} = center();
-  const s = clamp(30 + a*20, 100, 260);
+  const s = clamp(30 + a*6, 110, 280);
 
   const frontX = cx - s/2;
-  const frontY = cy - s/2 + 30;
-
+  const frontY = cy - s/2 + 35;
   const dx = s*0.35;
   const dy = s*0.25;
 
   ctx.lineWidth = 3;
 
-  // front
   ctx.strokeRect(frontX, frontY, s, s);
 
-  // top
   ctx.beginPath();
   ctx.moveTo(frontX, frontY);
   ctx.lineTo(frontX + dx, frontY - dy);
@@ -375,7 +355,6 @@ function drawCubeWireframe(a){
   ctx.closePath();
   ctx.stroke();
 
-  // right
   ctx.beginPath();
   ctx.moveTo(frontX + s, frontY);
   ctx.lineTo(frontX + dx + s, frontY - dy);
@@ -384,28 +363,25 @@ function drawCubeWireframe(a){
   ctx.closePath();
   ctx.stroke();
 
-  // label a on left vertical edge of front face
-  dimLine(frontX - 35, frontY, frontX - 35, frontY + s, `a = ${a}`);
+  dimLine(frontX - 45, frontY, frontX - 45, frontY + s, `a = ${a}`, true);
 }
 
 function drawCuboidWireframe(a,b,c){
   const {cx, cy} = center();
-  const w = clamp(40 + a*18, 150, 420);
-  const h = clamp(40 + b*18, 120, 300);
-  const depth = clamp(20 + c*10, 50, 180);
+  const w = clamp(40 + a*6, 160, 520);
+  const h = clamp(40 + b*6, 130, 360);
+  const depth = clamp(20 + c*4, 50, 200);
 
   const frontX = cx - w/2;
-  const frontY = cy - h/2 + 25;
+  const frontY = cy - h/2 + 35;
 
   const dx = depth*0.6;
   const dy = depth*0.4;
 
   ctx.lineWidth = 3;
 
-  // front
   ctx.strokeRect(frontX, frontY, w, h);
 
-  // top
   ctx.beginPath();
   ctx.moveTo(frontX, frontY);
   ctx.lineTo(frontX + dx, frontY - dy);
@@ -414,7 +390,6 @@ function drawCuboidWireframe(a,b,c){
   ctx.closePath();
   ctx.stroke();
 
-  // right
   ctx.beginPath();
   ctx.moveTo(frontX + w, frontY);
   ctx.lineTo(frontX + dx + w, frontY - dy);
@@ -423,8 +398,7 @@ function drawCuboidWireframe(a,b,c){
   ctx.closePath();
   ctx.stroke();
 
-  // labels a (width), b (height), c (depth-ish)
-  dimLine(frontX, frontY + h + 25, frontX + w, frontY + h + 25, `a = ${a}`);
-  dimLine(frontX - 35, frontY, frontX - 35, frontY + h, `b = ${b}`);
-  labelText(`c = ${c}`, frontX + w + dx + 10, frontY - dy + 20);
+  dimLine(frontX, frontY + h + 35, frontX + w, frontY + h + 35, `a = ${a}`, false);
+  dimLine(frontX - 45, frontY, frontX - 45, frontY + h, `b = ${b}`, true);
+  labelText(`c = ${c}`, frontX + w + dx + 12, frontY - dy + 25);
 }
