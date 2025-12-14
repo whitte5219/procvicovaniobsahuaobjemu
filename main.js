@@ -32,7 +32,6 @@ const CONCEPTS = [
   { key:"objem",  label:"objem"  }
 ];
 
-// FULL text formulas (no o/S/V shortcuts in calculator)
 const SHAPES = {
   square: {
     name: "Čtverec",
@@ -121,8 +120,7 @@ let values = {};
 for (const c of CONCEPTS) conceptSelect.add(new Option(c.label, c.key));
 for (const key in SHAPES) shapeSelect.add(new Option(SHAPES[key].name, key));
 
-// defaults
-shapeSelect.value = "square";
+shapeSelect.value = "cube";
 syncConceptOptions();
 buildInputs();
 render();
@@ -195,107 +193,134 @@ function render(){
   }
 
   ctx.clearRect(0,0,canvas.width,canvas.height);
+
   ctx.strokeStyle = "black";
   ctx.lineWidth = 2;
   ctx.strokeRect(1,1,canvas.width-2,canvas.height-2);
 
+  // stronger default style so 3D never looks “gone”
+  ctx.strokeStyle = "black";
+  ctx.fillStyle = "white";
+  ctx.lineWidth = 3;
+
   shape.draw(values);
 }
 
-// ---------------- Drawing helpers ----------------
+// ---------------- helpers ----------------
 function center(){ return { cx: canvas.width/2, cy: canvas.height/2 }; }
-function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
 
-function labelText(text, x, y){
+function labelText(text, x, y, align="left", baseline="alphabetic"){
   ctx.save();
   ctx.fillStyle = "black";
   ctx.font = "18px Arial";
+  ctx.textAlign = align;
+  ctx.textBaseline = baseline;
   ctx.fillText(text, x, y);
   ctx.restore();
 }
 
-function dimLine(x1,y1,x2,y2,text, vertical=false){
+// dimension line like your example: thin line + end caps + centered text
+function dimLineHorizontal(x1, y, x2, text){
   ctx.save();
-  ctx.strokeStyle = "black";
-  ctx.lineWidth = 1;
+  ctx.strokeStyle = "#666";
+  ctx.lineWidth = 2;
 
   ctx.beginPath();
-  ctx.moveTo(x1,y1);
-  ctx.lineTo(x2,y2);
+  ctx.moveTo(x1, y);
+  ctx.lineTo(x2, y);
   ctx.stroke();
 
-  // ticks
-  const tick = 6;
+  const cap = 8;
   ctx.beginPath();
-  if (vertical){
-    ctx.moveTo(x1 - tick, y1); ctx.lineTo(x1 + tick, y1);
-    ctx.moveTo(x2 - tick, y2); ctx.lineTo(x2 + tick, y2);
-  } else {
-    ctx.moveTo(x1, y1 - tick); ctx.lineTo(x1, y1 + tick);
-    ctx.moveTo(x2, y2 - tick); ctx.lineTo(x2, y2 + tick);
-  }
+  ctx.moveTo(x1, y-cap);
+  ctx.lineTo(x1, y+cap);
+  ctx.moveTo(x2, y-cap);
+  ctx.lineTo(x2, y+cap);
   ctx.stroke();
 
-  labelText(text, (x1+x2)/2 + 8, (y1+y2)/2 - 8);
+  labelText(text, (x1+x2)/2, y-10, "center", "alphabetic");
   ctx.restore();
 }
 
-// ---------------- 2D drawings + labels ----------------
+function dimLineVertical(x, y1, y2, text){
+  ctx.save();
+  ctx.strokeStyle = "#666";
+  ctx.lineWidth = 2;
+
+  ctx.beginPath();
+  ctx.moveTo(x, y1);
+  ctx.lineTo(x, y2);
+  ctx.stroke();
+
+  const cap = 8;
+  ctx.beginPath();
+  ctx.moveTo(x-cap, y1);
+  ctx.lineTo(x+cap, y1);
+  ctx.moveTo(x-cap, y2);
+  ctx.lineTo(x+cap, y2);
+  ctx.stroke();
+
+  // center text next to line
+  labelText(text, x+12, (y1+y2)/2, "left", "middle");
+  ctx.restore();
+}
+
+// ---------------- 2D drawings ----------------
 function drawSquare(a){
   const {cx, cy} = center();
-  const s = clamp(20 + a*6, 60, 260); // gentler scaling for big numbers
+  const s = clamp(40 + a*4, 80, 260);
+
   const x = cx - s/2;
   const y = cy - s/2;
 
-  ctx.lineWidth = 3;
   ctx.strokeRect(x, y, s, s);
 
-  // LEFT label: a
-  dimLine(x - 40, y, x - 40, y + s, `a = ${a}`, true);
+  // left: a
+  dimLineVertical(x - 70, y, y + s, `a = ${a}`);
+  // bottom: a (centered)
+  dimLineHorizontal(x, y + s + 45, x + s, `a = ${a}`);
 }
 
 function drawRectangle(a,b){
   const {cx, cy} = center();
-  const w = clamp(30 + a*6, 80, 420);
-  const h = clamp(30 + b*6, 70, 300);
+  const w = clamp(60 + a*4, 120, 460);
+  const h = clamp(50 + b*4, 100, 320);
+
   const x = cx - w/2;
   const y = cy - h/2;
 
-  ctx.lineWidth = 3;
   ctx.strokeRect(x, y, w, h);
 
-  // bottom a, left b
-  dimLine(x, y + h + 35, x + w, y + h + 35, `a = ${a}`, false);
-  dimLine(x - 40, y, x - 40, y + h, `b = ${b}`, true);
+  dimLineVertical(x - 70, y, y + h, `b = ${b}`);
+  dimLineHorizontal(x, y + h + 45, x + w, `a = ${a}`);
 }
 
 function drawCircle(r){
   const {cx, cy} = center();
-  const rad = clamp(20 + r*6, 40, 190);
+  const rad = clamp(40 + r*4, 60, 190);
 
-  ctx.lineWidth = 3;
   ctx.beginPath();
   ctx.arc(cx, cy, rad, 0, Math.PI*2);
   ctx.stroke();
 
-  // radius line + label
+  // radius + label
   ctx.beginPath();
   ctx.moveTo(cx, cy);
   ctx.lineTo(cx + rad, cy);
   ctx.stroke();
 
-  labelText(`r = ${r}`, cx + rad + 15, cy + 6);
+  labelText(`r = ${r}`, cx + rad + 20, cy, "left", "middle");
 }
 
 function drawRightTriangle(a,b){
   const {cx, cy} = center();
-  const w = clamp(30 + a*6, 90, 420);
-  const h = clamp(30 + b*6, 90, 300);
+  const w = clamp(70 + a*4, 140, 460);
+  const h = clamp(70 + b*4, 140, 320);
 
   const x0 = cx - w/2;
   const y0 = cy + h/2;
 
-  ctx.lineWidth = 3;
   ctx.beginPath();
   ctx.moveTo(x0, y0);
   ctx.lineTo(x0 + w, y0);
@@ -303,20 +328,19 @@ function drawRightTriangle(a,b){
   ctx.closePath();
   ctx.stroke();
 
-  dimLine(x0, y0 + 35, x0 + w, y0 + 35, `a = ${a}`, false);
-  dimLine(x0 - 40, y0 - h, x0 - 40, y0, `b = ${b}`, true);
+  dimLineVertical(x0 - 70, y0 - h, y0, `b = ${b}`);
+  dimLineHorizontal(x0, y0 + 45, x0 + w, `a = ${a}`);
 }
 
 function drawNonRightTriangle(a, va){
   const {cx, cy} = center();
-  const base = clamp(30 + a*6, 110, 460);
-  const h = clamp(30 + va*6, 90, 320);
+  const base = clamp(90 + a*4, 160, 520);
+  const h = clamp(80 + va*4, 140, 360);
 
   const x1 = cx - base/2, y1 = cy + h/2;
   const x2 = cx + base/2, y2 = cy + h/2;
   const x3 = cx - base/6, y3 = cy - h/2;
 
-  ctx.lineWidth = 3;
   ctx.beginPath();
   ctx.moveTo(x1,y1);
   ctx.lineTo(x2,y2);
@@ -324,29 +348,36 @@ function drawNonRightTriangle(a, va){
   ctx.closePath();
   ctx.stroke();
 
-  dimLine(x1, y1 + 35, x2, y2 + 35, `a = ${a}`, false);
+  dimLineHorizontal(x1, y1 + 45, x2, `a = ${a}`);
 
+  ctx.strokeStyle = "#666";
+  ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(x3, y3);
   ctx.lineTo(x3, y1);
   ctx.stroke();
-  labelText(`vₐ = ${va}`, x3 + 12, (y3 + y1)/2);
+
+  labelText(`vₐ = ${va}`, x3 + 12, (y3+y1)/2, "left", "middle");
+
+  ctx.strokeStyle = "black";
+  ctx.lineWidth = 3;
 }
 
-// ---------------- 3D wireframe + labels ----------------
+// ---------------- 3D wireframe (kept big & visible) ----------------
 function drawCubeWireframe(a){
   const {cx, cy} = center();
-  const s = clamp(30 + a*6, 110, 280);
+  const s = clamp(120 + a*2, 140, 280);
 
   const frontX = cx - s/2;
-  const frontY = cy - s/2 + 35;
-  const dx = s*0.35;
-  const dy = s*0.25;
+  const frontY = cy - s/2 + 30;
 
-  ctx.lineWidth = 3;
+  const dx = s * 0.35;
+  const dy = s * 0.25;
 
+  // front
   ctx.strokeRect(frontX, frontY, s, s);
 
+  // top
   ctx.beginPath();
   ctx.moveTo(frontX, frontY);
   ctx.lineTo(frontX + dx, frontY - dy);
@@ -355,6 +386,7 @@ function drawCubeWireframe(a){
   ctx.closePath();
   ctx.stroke();
 
+  // right
   ctx.beginPath();
   ctx.moveTo(frontX + s, frontY);
   ctx.lineTo(frontX + dx + s, frontY - dy);
@@ -363,22 +395,22 @@ function drawCubeWireframe(a){
   ctx.closePath();
   ctx.stroke();
 
-  dimLine(frontX - 45, frontY, frontX - 45, frontY + s, `a = ${a}`, true);
+  // show a on left + bottom
+  dimLineVertical(frontX - 70, frontY, frontY + s, `a = ${a}`);
+  dimLineHorizontal(frontX, frontY + s + 45, frontX + s, `a = ${a}`);
 }
 
 function drawCuboidWireframe(a,b,c){
   const {cx, cy} = center();
-  const w = clamp(40 + a*6, 160, 520);
-  const h = clamp(40 + b*6, 130, 360);
-  const depth = clamp(20 + c*4, 50, 200);
+  const w = clamp(180 + a*2, 220, 520);
+  const h = clamp(150 + b*2, 180, 380);
+  const depth = clamp(70 + c*1.5, 90, 220);
 
   const frontX = cx - w/2;
-  const frontY = cy - h/2 + 35;
+  const frontY = cy - h/2 + 30;
 
   const dx = depth*0.6;
   const dy = depth*0.4;
-
-  ctx.lineWidth = 3;
 
   ctx.strokeRect(frontX, frontY, w, h);
 
@@ -398,7 +430,7 @@ function drawCuboidWireframe(a,b,c){
   ctx.closePath();
   ctx.stroke();
 
-  dimLine(frontX, frontY + h + 35, frontX + w, frontY + h + 35, `a = ${a}`, false);
-  dimLine(frontX - 45, frontY, frontX - 45, frontY + h, `b = ${b}`, true);
-  labelText(`c = ${c}`, frontX + w + dx + 12, frontY - dy + 25);
+  dimLineVertical(frontX - 70, frontY, frontY + h, `b = ${b}`);
+  dimLineHorizontal(frontX, frontY + h + 45, frontX + w, `a = ${a}`);
+  labelText(`c = ${c}`, frontX + w + dx + 18, frontY - dy + 20, "left", "middle");
 }
