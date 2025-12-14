@@ -1,190 +1,123 @@
-import { SHAPES, MEANINGS, DEFAULTS, unitForPow } from "./formulas.js";
-import { fmtNumber } from "./utils.js";
-import { draw2D } from "./draw2d.js";
-import { createCubeController, draw3D } from "./draw3d.js";
-
-const conceptSelect = document.getElementById("conceptSelect");
-const shapeSelect = document.getElementById("shapeSelect");
-const inputsWrap = document.getElementById("inputs");
-
-const formulaText = document.getElementById("formulaText");
-const resultText = document.getElementById("resultText");
-const meaningText = document.getElementById("meaningText");
-const unitHint = document.getElementById("unitHint");
+const conceptSelect = document.getElementById("concept");
+const shapeSelect = document.getElementById("shape");
+const inputsDiv = document.getElementById("inputs");
+const formulaDiv = document.getElementById("formula");
+const resultDiv = document.getElementById("result");
+const meaningDiv = document.getElementById("meaning");
 
 const canvas2d = document.getElementById("canvas2d");
+const ctx2d = canvas2d.getContext("2d");
+
 const canvas3d = document.getElementById("canvas3d");
+const ctx3d = canvas3d.getContext("2d");
 
-const canvas2dHint = document.getElementById("canvas2dHint");
-const canvas3dHint = document.getElementById("canvas3dHint");
+const CONCEPTS = ["obvod", "obsah", "povrch", "objem"];
+const values = {};
 
-const btnExplorer = document.getElementById("btnExplorer");
-const btnCalculator = document.getElementById("btnCalculator");
+// init selects
+CONCEPTS.forEach(c => {
+  const o = document.createElement("option");
+  o.value = c;
+  o.textContent = c;
+  conceptSelect.appendChild(o);
+});
 
-let mode = "calculator"; // explorer or calculator
-let currentDims = {};
-
-const cubeController = createCubeController(canvas3d);
-
-// --- init selects ---
-const CONCEPTS = [
-  { key:"obvod", label:"Obvod" },
-  { key:"obsah", label:"Obsah" },
-  { key:"povrch", label:"Povrch" },
-  { key:"objem", label:"Objem" }
-];
-
-function setMode(newMode){
-  mode = newMode;
-  btnExplorer.classList.toggle("active", mode === "explorer");
-  btnCalculator.classList.toggle("active", mode === "calculator");
-  // In explorer mode: results are still shown, but input can be minimal.
-  render();
+for (const key in SHAPES) {
+  const o = document.createElement("option");
+  o.value = key;
+  o.textContent = SHAPES[key].name;
+  shapeSelect.appendChild(o);
 }
 
-btnExplorer.addEventListener("click", () => setMode("explorer"));
-btnCalculator.addEventListener("click", () => setMode("calculator"));
-
-function populateConcepts(){
-  conceptSelect.innerHTML = "";
-  for (const c of CONCEPTS){
-    const opt = document.createElement("option");
-    opt.value = c.key;
-    opt.textContent = c.label;
-    conceptSelect.appendChild(opt);
-  }
-  conceptSelect.value = "obsah";
-}
-
-function populateShapes(){
-  shapeSelect.innerHTML = "";
-  for (const [key, def] of Object.entries(SHAPES)){
-    const opt = document.createElement("option");
-    opt.value = key;
-    opt.textContent = def.label;
-    shapeSelect.appendChild(opt);
-  }
-  shapeSelect.value = "rightTriangle";
-}
-
-function getSelected(){
-  const concept = conceptSelect.value;
-  const shapeKey = shapeSelect.value;
-  const shapeDef = SHAPES[shapeKey];
-  return { concept, shapeKey, shapeDef };
-}
-
-function allowedConceptsForShape(shapeDef){
-  return shapeDef.concepts;
-}
-
-function syncConceptToShape(){
-  const { concept, shapeDef } = getSelected();
-  const allowed = allowedConceptsForShape(shapeDef);
-  if (!allowed.includes(concept)){
-    conceptSelect.value = allowed[0];
-  }
-}
-
-function buildInputs(shapeDef){
-  inputsWrap.innerHTML = "";
-  currentDims = {};
-
-  const dims = shapeDef.dims;
-  for (const d of dims){
-    const wrap = document.createElement("label");
-    wrap.className = "inputWrap";
-    wrap.innerHTML = `
-      ${d.label} <span class="hint">(${d.hint})</span>
-      <input type="number" step="0.1" min="0" id="in_${d.key}" />
-    `;
-    inputsWrap.appendChild(wrap);
-
-    const input = wrap.querySelector("input");
-    const defVal = DEFAULTS[d.key] ?? 5;
-    input.value = String(defVal);
-    currentDims[d.key] = Number(input.value);
-
-    input.addEventListener("input", () => {
-      currentDims[d.key] = Number(input.value);
+function updateInputs() {
+  inputsDiv.innerHTML = "";
+  const shape = SHAPES[shapeSelect.value];
+  shape.dims.forEach(d => {
+    values[d] = 5;
+    const input = document.createElement("input");
+    input.type = "number";
+    input.value = 5;
+    input.oninput = () => {
+      values[d] = Number(input.value);
       render();
-    });
+    };
+    inputsDiv.append(d + ": ", input, document.createElement("br"));
+  });
+}
+
+function draw2D() {
+  ctx2d.clearRect(0,0,500,300);
+  ctx2d.strokeStyle = "#0066cc";
+  ctx2d.lineWidth = 3;
+  ctx2d.fillStyle = "rgba(0,102,204,0.2)";
+
+  const shape = shapeSelect.value;
+
+  if (shape === "square") {
+    ctx2d.fillRect(150,80,200,200);
+    ctx2d.strokeRect(150,80,200,200);
+  }
+
+  if (shape === "circle") {
+    ctx2d.beginPath();
+    ctx2d.arc(250,150,80,0,Math.PI*2);
+    ctx2d.fill();
+    ctx2d.stroke();
+  }
+
+  if (shape === "triangle") {
+    ctx2d.beginPath();
+    ctx2d.moveTo(150,250);
+    ctx2d.lineTo(350,250);
+    ctx2d.lineTo(150,80);
+    ctx2d.closePath();
+    ctx2d.fill();
+    ctx2d.stroke();
   }
 }
 
-function computeValue(shapeDef, concept){
-  const f = shapeDef.formulas?.[concept];
-  if (!f) return { value: NaN, formula: "—", unitPow: 0 };
-  try{
-    const value = f.compute(currentDims);
-    return { value, formula: f.text, unitPow: f.unitPow ?? 0 };
-  } catch {
-    return { value: NaN, formula: f.text ?? "—", unitPow: f.unitPow ?? 0 };
-  }
+function draw3D() {
+  ctx3d.clearRect(0,0,500,300);
+  if (shapeSelect.value !== "cube") return;
+
+  ctx3d.strokeStyle = "#0066cc";
+  ctx3d.lineWidth = 2;
+
+  ctx3d.strokeRect(180,100,120,120);
+  ctx3d.strokeRect(220,70,120,120);
+
+  ctx3d.beginPath();
+  ctx3d.moveTo(180,100); ctx3d.lineTo(220,70);
+  ctx3d.moveTo(300,100); ctx3d.lineTo(340,70);
+  ctx3d.moveTo(180,220); ctx3d.lineTo(220,190);
+  ctx3d.moveTo(300,220); ctx3d.lineTo(340,190);
+  ctx3d.stroke();
 }
 
-function render(){
-  const { concept, shapeKey, shapeDef } = getSelected();
-  const allowed = allowedConceptsForShape(shapeDef);
+function render() {
+  const shape = SHAPES[shapeSelect.value];
+  const concept = conceptSelect.value;
 
-  // hint pills
-  canvas2dHint.textContent = shapeDef.type === "2d" ? `${shapeDef.label} / ${concept}` : "Zvol tvar 2D";
-  canvas3dHint.textContent = (shapeKey === "cube") ? `Krychle / ${concept}` : "Zvol krychli pro 3D";
+  meaningDiv.textContent = MEANINGS[concept] || "";
+  const f = shape.formulas[concept];
 
-  // meaning
-  meaningText.textContent = MEANINGS[concept] ?? "";
-
-  // formula + result
-  const { value, formula, unitPow } = computeValue(shapeDef, concept);
-  formulaText.textContent = formula;
-  resultText.textContent = fmtNumber(value);
-  unitHint.textContent = unitForPow(unitPow);
-
-  // draw 2D
-  if (shapeDef.type === "2d"){
-    draw2D(canvas2d, concept, shapeKey, currentDims);
+  if (!f) {
+    formulaDiv.textContent = "—";
+    resultDiv.textContent = "—";
   } else {
-    // draw a friendly placeholder by drawing square in 2D if cube selected? We keep it blank-ish.
-    draw2D(canvas2d, "obsah", "square", { a: 6 });
+    formulaDiv.textContent = f.text;
+    resultDiv.textContent = f.calc(values).toFixed(2);
   }
 
-  // draw 3D (only cube makes sense)
-  if (shapeKey === "cube"){
-    draw3D(canvas3d, concept, currentDims, cubeController);
-  } else {
-    draw3D(canvas3d, concept, { a: 6 }, cubeController);
-  }
+  draw2D();
+  draw3D();
 }
 
-// re-render continuously so cube rotation feels smooth while dragging
-function tick(){
+shapeSelect.onchange = () => {
+  updateInputs();
   render();
-  requestAnimationFrame(tick);
-}
+};
+conceptSelect.onchange = render;
 
-// events
-conceptSelect.addEventListener("change", () => {
-  const { shapeDef } = getSelected();
-  const allowed = allowedConceptsForShape(shapeDef);
-  if (!allowed.includes(conceptSelect.value)){
-    conceptSelect.value = allowed[0];
-  }
-  render();
-});
-
-shapeSelect.addEventListener("change", () => {
-  syncConceptToShape();
-  const { shapeDef } = getSelected();
-  buildInputs(shapeDef);
-  render();
-});
-
-// init
-populateConcepts();
-populateShapes();
-syncConceptToShape();
-buildInputs(SHAPES[shapeSelect.value]);
-
-// start
-tick();
-
+updateInputs();
+render();
