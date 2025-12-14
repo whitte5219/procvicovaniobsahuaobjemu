@@ -1,1 +1,87 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Obvod • Obsah • Povrch • Objem – Interaktivní pomůcka</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="title">
+      <h1>Interaktivní pomůcka</h1>
+      <p>Rozdíl mezi: <b>obvod</b>, <b>obsah</b>, <b>povrch</b>, <b>objem</b></p>
+    </div>
+    <div class="badge">2D + 3D</div>
+  </header>
+
+  <main class="layout">
+    <section class="panel">
+      <div class="mode">
+        <button id="btnExplorer" class="tab active">Vzorce</button>
+        <button id="btnCalculator" class="tab">Kalkulačka</button>
+      </div>
+
+      <div class="controls">
+        <label>
+          Pojem
+          <select id="conceptSelect"></select>
+        </label>
+
+        <label>
+          Tvar
+          <select id="shapeSelect"></select>
+        </label>
+
+        <div id="inputs" class="inputs"></div>
+
+        <div class="box">
+          <div class="boxTitle">Vzorec</div>
+          <div id="formulaText" class="mono"></div>
+        </div>
+
+        <div class="box">
+          <div class="boxTitle">Výsledek</div>
+          <div id="resultText" class="result"></div>
+          <div id="unitHint" class="hint"></div>
+        </div>
+
+        <div class="box">
+          <div class="boxTitle">Význam pojmu</div>
+          <div id="meaningText" class="meaning"></div>
+        </div>
+
+        <div class="hint small">
+          Tip: U 3D krychle můžeš myší otáčet (max ±15°).
+        </div>
+      </div>
+    </section>
+
+    <section class="visuals">
+      <div class="canvasCard">
+        <div class="canvasHeader">
+          <span>2D nákres</span>
+          <span id="canvas2dHint" class="pill"></span>
+        </div>
+        <canvas id="canvas2d" width="640" height="420"></canvas>
+      </div>
+
+      <div class="canvasCard">
+        <div class="canvasHeader">
+          <span>3D nákres (krychle)</span>
+          <span id="canvas3dHint" class="pill"></span>
+        </div>
+        <canvas id="canvas3d" width="640" height="420"></canvas>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Hotovo pro odevzdání – GitHub Pages friendly.</span>
+  </footer>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
 
