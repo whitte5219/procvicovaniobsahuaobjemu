@@ -1,4 +1,3 @@
-/* ---------- GLOBAL ---------- */
 body {
   font-family: Arial, sans-serif;
   background: white;
@@ -7,21 +6,13 @@ body {
   padding: 20px;
 }
 
-h1, h2, h3 {
-  text-align: center;
-}
+h1, h2, h3 { text-align: center; margin: 10px 0; }
 
-p {
-  max-width: 800px;
-  margin: 10px auto;
-}
+.page { max-width: 980px; margin: 0 auto; }
+.hidden { display: none; }
 
-/* ---------- TABS ---------- */
-.tabs {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
+/* Tabs */
+.tabs { text-align: center; margin-bottom: 18px; }
 .tabs button {
   padding: 8px 16px;
   margin: 0 5px;
@@ -29,104 +20,102 @@ p {
   border: 1px solid black;
   cursor: pointer;
 }
+.tabs button.active { font-weight: bold; background: #e0e0e0; }
 
-.tabs button.active {
-  font-weight: bold;
-  background: #e0e0e0;
+/* Kalkulačka layout */
+#calc .row{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  max-width: 640px;
+  margin: 12px auto;
+  text-align: left;
 }
 
-/* ---------- PAGES ---------- */
-.page {
-  max-width: 900px;
-  margin: auto;
+label { font-weight: normal; }
+
+select, input{
+  width: 100%;
+  padding: 6px;
+  border: 1px solid #777;
+  font-size: 16px;
+  box-sizing: border-box;
+  margin-top: 4px;
 }
 
-.hidden {
-  display: none;
+.inputs{
+  max-width: 640px;
+  margin: 10px auto;
+  text-align: left;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
 }
 
-/* ---------- FORM LAYOUT ---------- */
-.row {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin: 15px 0;
+#calc p{
+  text-align: center;
+  font-size: 18px;
+  margin: 8px 0;
 }
 
-label {
-  font-weight: bold;
-}
-
-select, input {
-  margin-left: 6px;
-  padding: 4px;
-}
-
-.inputs {
-  max-width: 300px;
-  margin: auto;
-}
-
-.inputs div {
-  margin-bottom: 10px;
-}
-
-/* ---------- CANVAS ---------- */
-canvas {
+canvas{
   display: block;
-  margin: 20px auto;
+  margin: 16px auto;
   border: 1px solid black;
   background: white;
 }
 
-/* ---------- HELP SECTION ---------- */
-.helpCard {
+/* Pomůcky cards */
+.helpCard{
   border: 1px solid black;
   padding: 10px;
-  margin: 10px auto;
-  max-width: 800px;
+  margin: 12px auto;
+  max-width: 900px;
+  text-align: left;
 }
+.helpTitle{ font-weight: bold; margin-bottom: 6px; }
 
-.helpTitle {
-  font-weight: bold;
-  margin-bottom: 5px;
+.helpGrid{
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  gap: 10px;
+  align-items: center;
 }
+.helpImg{ text-align: center; }
+.helpText ul{ margin: 0; padding-left: 18px; }
 
-/* ---------- AI CHAT ---------- */
-#chatBox {
+/* AI assistant */
+#ai p{ max-width: 900px; margin: 10px auto; }
+#chatBox{
   border: 1px solid black;
   height: 300px;
   padding: 10px;
   overflow-y: auto;
   background: white;
-  max-width: 800px;
+  max-width: 900px;
   margin: 10px auto;
 }
+.chatUser{ text-align: right; margin: 8px 0; }
+.chatAI{ text-align: left; margin: 8px 0; }
 
-.chatUser {
-  text-align: right;
-  margin: 6px 0;
+#ai .row{
+  display: flex;
+  gap: 10px;
+  max-width: 900px;
+  margin: 10px auto;
 }
-
-.chatAI {
-  text-align: left;
-  margin: 6px 0;
-}
-
-#aiInput {
-  flex: 1;
-  padding: 6px;
-}
-
-#aiSend {
-  padding: 6px 14px;
+#aiSend{
+  width: 140px;
+  background: #f0f0f0;
+  border: 1px solid black;
   cursor: pointer;
 }
 
-/* ---------- SMALL SCREENS ---------- */
-@media (max-width: 600px) {
-  .row {
-    flex-direction: column;
-    align-items: center;
-  }
+/* Mobile */
+@media (max-width: 700px){
+  #calc .row{ grid-template-columns: 1fr; }
+  .inputs{ grid-template-columns: 1fr; }
+  .helpGrid{ grid-template-columns: 1fr; }
+  #ai .row{ flex-direction: column; }
+  #aiSend{ width: 100%; }
 }
