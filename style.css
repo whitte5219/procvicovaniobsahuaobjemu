@@ -1,46 +1,29 @@
 body {
   font-family: Arial, sans-serif;
-  background: white;
-  color: #003366;
   text-align: center;
-  margin: 0;
-  padding: 20px;
+  background: white;
+  color: black;
 }
 
-h1 {
-  margin-bottom: 5px;
-}
-
-.subtitle {
-  margin-top: 0;
-  color: #336699;
-}
-
-.controls {
-  max-width: 500px;
-  margin: 20px auto;
-  text-align: left;
+.tabs button {
+  margin: 5px;
+  padding: 6px 12px;
 }
 
 label {
   display: block;
-  margin-bottom: 10px;
-}
-
-select, input {
-  width: 100%;
-  padding: 6px;
-  margin-top: 4px;
-}
-
-.box {
-  border: 2px solid #3399ff;
-  padding: 8px;
-  margin-top: 10px;
+  margin: 10px;
 }
 
 canvas {
-  display: block;
-  margin: 20px auto;
-  border: 2px solid #3399ff;
+  border: 1px solid black;
+  margin-top: 10px;
+}
+
+.hidden {
+  display: none;
+}
+
+.buttons button {
+  margin: 5px;
 }
